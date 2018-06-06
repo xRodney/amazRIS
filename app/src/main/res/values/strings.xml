@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">amazRIS</string>
+    <string name="loading">Loading...</string>
+    <string name="title_activity_departures">DeparturesActivity</string>
+</resources>

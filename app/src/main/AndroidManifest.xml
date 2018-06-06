@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    package="name.xrodney.amazris">
+
+    <uses-sdk tools:overrideLibrary="android.support.wear" />
+
+    <uses-permission android:name="android.permission.INTERNET" />
+
+    <application
+        android:allowBackup="true"
+        android:icon="@mipmap/ic_launcher"
+        android:label="@string/app_name"
+        android:supportsRtl="true"
+        android:theme="@style/AppTheme">
+        <!--<meta-data-->
+            <!--android:name="com.huami.watch.launcher.springboard.PASSAGER_TARGET"-->
+            <!--android:resource="@array/spring_depend" />-->
+
+        <activity android:name=".activity.StopsActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity
+            android:name=".activity.DeparturesActivity"
+            android:label="@string/title_activity_departures"
+            android:theme="@style/AppTheme"></activity>
+    </application>
+
+</manifest>

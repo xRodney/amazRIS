@@ -39,4 +39,5 @@ dependencies {
     implementation files('libs/AmazfitCommunication.jar')
     implementation 'commons-io:commons-io:20030203.000550'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.5'
+    compile 'com.android.support:wear:27.0.0'
 }

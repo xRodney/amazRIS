@@ -4,21 +4,22 @@ import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.wear.widget.WearableLinearLayoutManager;
+import android.support.wear.widget.WearableRecyclerView;
 import android.widget.Toast;
-
-import name.xrodney.amazris.R;
-import name.xrodney.amazris.data.GenericClient;
-import name.xrodney.amazris.data.RisClient;
-import name.xrodney.amazris.adapter.StopsListAdapter;
-import name.xrodney.amazris.model.Stop;
 
 import java.util.List;
 
+import name.xrodney.amazris.R;
+import name.xrodney.amazris.adapter.StopsListAdapter;
+import name.xrodney.amazris.data.GenericClient;
+import name.xrodney.amazris.data.RisClient;
+import name.xrodney.amazris.layout.AmazfitLayoutCallback;
+import name.xrodney.amazris.model.Stop;
+
 public class StopsActivity extends Activity implements GenericClient.RisCallback<List<Stop>>,StopsListAdapter.StopClickListener {
 
-    private RecyclerView stopsList;
+    private WearableRecyclerView stopsList;
     private RisClient client;
     private ProgressDialog progressDialog;
 
@@ -49,7 +50,9 @@ public class StopsActivity extends Activity implements GenericClient.RisCallback
             StopsListAdapter adapter = new StopsListAdapter(stops, this);
             stopsList.setHasFixedSize(true);
             stopsList.setAdapter(adapter);
-            stopsList.setLayoutManager(new LinearLayoutManager(this));
+
+            stopsList.setEdgeItemsCenteringEnabled(true);
+            stopsList.setLayoutManager(new WearableLinearLayoutManager(this, new AmazfitLayoutCallback(this)));
         });
     }
 

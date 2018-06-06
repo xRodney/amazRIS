@@ -17,10 +17,13 @@
         tools:layout_editor_absoluteX="118dp"
         tools:layout_editor_absoluteY="217dp" />
 
-    <android.support.v7.widget.RecyclerView
+    <android.support.wear.widget.WearableRecyclerView
         android:id="@+id/stops_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_weight="0" />
+        android:layout_weight="0"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        app:circularScrollingGestureEnabled="false" />
 
 </LinearLayout>

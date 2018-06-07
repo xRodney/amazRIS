@@ -1,25 +1,37 @@
 package name.xrodney.amazris.model;
 
+import android.arch.persistence.room.ColumnInfo;
+import android.arch.persistence.room.Entity;
+import android.arch.persistence.room.PrimaryKey;
+
 import com.fasterxml.jackson.annotation.JsonProperty;
 
+@Entity
 public class Stop {
     //http://iris.bmhd.cz/api/stops.json
 
+    @PrimaryKey
+    private int id;
+
     @JsonProperty("Name")
+    @ColumnInfo
     private String name;
 
     @JsonProperty("Zone")
+    @ColumnInfo
     private String zone;
 
     @JsonProperty("Lat")
+    @ColumnInfo
     private Double lat;
 
     @JsonProperty("Lng")
+    @ColumnInfo
     private Double lng;
 
     @JsonProperty("Public")
+    @ColumnInfo
     private boolean isPublic;
-    private int id;
 
     public String getName() {
         return name;

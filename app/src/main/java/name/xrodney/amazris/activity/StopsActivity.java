@@ -14,6 +14,7 @@ import name.xrodney.amazris.R;
 import name.xrodney.amazris.adapter.StopsListAdapter;
 import name.xrodney.amazris.data.GenericClient;
 import name.xrodney.amazris.data.RisClient;
+import name.xrodney.amazris.database.AppDatabase;
 import name.xrodney.amazris.layout.AmazfitLayoutCallback;
 import name.xrodney.amazris.model.Stop;
 
@@ -30,7 +31,7 @@ public class StopsActivity extends Activity implements GenericClient.RisCallback
         stopsList = findViewById(R.id.stops_list);
         progressDialog = new ProgressDialog(this);
 
-        client = new RisClient();
+        client = new RisClient(AppDatabase.getInstance(this));
 
         refresh();
     }

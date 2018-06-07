@@ -8,23 +8,27 @@ import android.util.Log;
 import com.fasterxml.jackson.core.JsonParser;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import name.xrodney.amazris.model.StopDepartures;
-import name.xrodney.amazris.model.Stop;
 
-import org.apache.commons.io.IOUtil;
-
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.StringBufferInputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import name.xrodney.amazris.database.AppDatabase;
+import name.xrodney.amazris.database.StopDao;
+import name.xrodney.amazris.model.Stop;
+import name.xrodney.amazris.model.StopDepartures;
 
 public class RisClient {
     public static final String STOPS = "Stops";
     private final GenericClient genericClient = new GenericClient();
 
     private ObjectMapper mapper = new ObjectMapper();
+    private AppDatabase database;
+
+    public RisClient(AppDatabase database) {
+        this.database = database;
+    }
 
     public void getDepartures(int stopId, Context context, final GenericClient.RisCallback<StopDepartures> callback) {
         genericClient.getData("http://iris.bmhd.cz/api/getDeparturesNew.php?stopId=" + stopId,
@@ -35,27 +39,11 @@ public class RisClient {
     }
 
     public void getStops(Context context, final GenericClient.RisCallback<List<Stop>> callback) {
-
-        GenericClient.ConnectionHandler<List<Stop>> handler = string -> {
-            genericClient.storeToCache(context, STOPS, string);
-            return parseStops(string);
-        };
-
-        if (tryLoadStopsFromCache(context, callback, handler)) {
-            Log.i(getClass().getSimpleName(), "Loaded from cache");
-        } else {
-            Log.i(getClass().getSimpleName(), "Loading from net");
-            genericClient.getData("http://iris.bmhd.cz/api/stops.json", context, callback, handler);
-        }
+        new StopsCacheTask(database.stopDao(), context, genericClient, callback).execute();
     }
 
-    private boolean tryLoadStopsFromCache(Context context, GenericClient.RisCallback<List<Stop>> callback, GenericClient.ConnectionHandler<List<Stop>> handler) {
-        String cached = genericClient.loadFromCache(context, STOPS);
-        if (cached == null) {
-            return false;
-        }
-        new StopsCacheTask(callback, cached, handler).execute();
-        return true;
+    public void getStops(Context context, double lat, double lng, final GenericClient.RisCallback<List<Stop>> callback) {
+        new StopsCacheTask(database.stopDao(), context, genericClient, callback).execute(lat, lng);
     }
 
     @NonNull
@@ -72,25 +60,50 @@ public class RisClient {
         return stopsList;
     }
 
-    private static class StopsCacheTask extends AsyncTask<Void, Void, Void> {
-        private final GenericClient.RisCallback<List<Stop>> callback;
-        private final String cached;
-        private final GenericClient.ConnectionHandler<List<Stop>> handler;
+    private class StopsCacheTask extends AsyncTask<Double, Void, Boolean> {
+        private GenericClient.RisCallback<List<Stop>> callback;
+        private StopDao stopDao;
+        private Context context;
+        private GenericClient genericClient;
 
-        public StopsCacheTask(GenericClient.RisCallback<List<Stop>> callback, String cached, GenericClient.ConnectionHandler<List<Stop>> handler) {
+        public StopsCacheTask(StopDao stopDao, Context context, GenericClient genericClient, GenericClient.RisCallback<List<Stop>> callback) {
+            this.context = context;
+            this.genericClient = genericClient;
             this.callback = callback;
-            this.cached = cached;
-            this.handler = handler;
+            this.stopDao = stopDao;
         }
 
         @Override
-        protected Void doInBackground(Void... voids) {
+        protected Boolean doInBackground(Double... coords) {
             try {
-                callback.onResult(handler.handle(new ByteArrayInputStream(cached.getBytes())));
-            } catch (IOException e) {
+                if (stopDao.count() == 0) {
+                    Log.i(getClass().getSimpleName(), "Loading from net");
+                    return false;
+                }
+
+                Log.i(getClass().getSimpleName(), "Loading from cache");
+                if (coords.length == 0) {
+                    callback.onResult(stopDao.getAll());
+                } else if (coords.length == 2) {
+                    callback.onResult(stopDao.getNearby(coords[0], coords[1], 1.0));
+                } else {
+                    throw new IllegalArgumentException("Exactly 0 or 2 arguments must be given");
+                }
+            } catch (Exception e) {
                 callback.onError(e);
             }
-            return null;
+            return true;
+        }
+
+        @Override
+        protected void onPostExecute(Boolean foundInCache) {
+            if (!foundInCache) {
+                genericClient.getData("http://iris.bmhd.cz/api/stops.json", context, callback, string -> {
+                    List<Stop> stops = parseStops(string);
+                    stopDao.insertAll(stops);
+                    return stops;
+                });
+            }
         }
     }
 }

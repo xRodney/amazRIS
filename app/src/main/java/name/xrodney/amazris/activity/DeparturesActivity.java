@@ -10,9 +10,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import name.xrodney.amazris.R;
+import name.xrodney.amazris.adapter.SignDeparturesAdapter;
 import name.xrodney.amazris.data.GenericClient;
 import name.xrodney.amazris.data.RisClient;
-import name.xrodney.amazris.adapter.SignDeparturesAdapter;
+import name.xrodney.amazris.database.AppDatabase;
 import name.xrodney.amazris.model.StopDepartures;
 
 public class DeparturesActivity extends Activity implements GenericClient.RisCallback<StopDepartures> {
@@ -38,7 +39,7 @@ public class DeparturesActivity extends Activity implements GenericClient.RisCal
         Intent intent = getIntent();
         stopId = intent.getIntExtra(EXTRA_STOP, 0);
 
-        client = new RisClient();
+        client = new RisClient(AppDatabase.getInstance(this));
 
         refresh();
     }

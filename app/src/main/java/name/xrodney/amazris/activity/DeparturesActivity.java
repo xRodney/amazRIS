@@ -1,11 +1,12 @@
 package name.xrodney.amazris.activity;
 
 import android.app.Activity;
-import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
+import android.support.wear.widget.WearableRecyclerView;
+import android.view.View;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -20,9 +21,11 @@ public class DeparturesActivity extends Activity implements GenericClient.RisCal
     public static final String EXTRA_STOP = "name.dusanjakub.amazris.STOP";
 
     private TextView clock;
-    private RecyclerView signList;
+    private WearableRecyclerView signList;
     private RisClient client;
-    private ProgressDialog progressDialog;
+//    private ProgressDialog progressDialog;
+    private ProgressBar progressBar;
+    private TextView errorText;
     private int stopId;
 
 
@@ -32,7 +35,9 @@ public class DeparturesActivity extends Activity implements GenericClient.RisCal
         setContentView(R.layout.activity_departures);
         clock = findViewById(R.id.clock);
         signList = findViewById(R.id.sign_list);
-        progressDialog = new ProgressDialog(this);
+        //progressDialog = new ProgressDialog(this);
+        progressBar = findViewById(R.id.progressBar);
+        errorText = findViewById(R.id.errorText);
 
 
         // Get the Intent that started this activity and extract the string
@@ -45,9 +50,13 @@ public class DeparturesActivity extends Activity implements GenericClient.RisCal
     }
 
     private void refresh() {
-        progressDialog.setMessage(getString(R.string.loading));
-        progressDialog.setCancelable(false);
-        progressDialog.show();
+//        progressDialog.setMessage(getString(R.string.loading));
+//        progressDialog.setCancelable(false);
+//        progressDialog.show();
+        progressBar.setVisibility(View.VISIBLE);
+        progressBar.setIndeterminate(true);
+
+        errorText.setVisibility(View.GONE);
 
         client.getDepartures(stopId, this, this);
     }
@@ -55,7 +64,14 @@ public class DeparturesActivity extends Activity implements GenericClient.RisCal
     @Override
     public void onResult(StopDepartures result) {
         runOnUiThread(() -> {
-            progressDialog.dismiss();
+//            progressDialog.dismiss();
+            progressBar.setVisibility(View.GONE);
+            if (result.getDepartures().isEmpty()) {
+                errorText.setVisibility(View.VISIBLE);
+                errorText.setText(R.string.nothing_to_show);
+            } else {
+                errorText.setVisibility(View.GONE);
+            }
             SignDeparturesAdapter adapter = new SignDeparturesAdapter(result.getDepartures());
             signList.setHasFixedSize(true);
             signList.setAdapter(adapter);
@@ -66,7 +82,10 @@ public class DeparturesActivity extends Activity implements GenericClient.RisCal
     @Override
     public void onError(Exception exception) {
         runOnUiThread(() -> {
-            progressDialog.dismiss();
+//            progressDialog.dismiss();
+            progressBar.setVisibility(View.GONE);
+            errorText.setVisibility(View.VISIBLE);
+            errorText.setText(exception.getMessage());
             exception.printStackTrace();
             Toast.makeText(this, exception.getMessage(), Toast.LENGTH_LONG).show();
         });

@@ -7,15 +7,35 @@
     android:orientation="vertical"
     tools:context="name.xrodney.amazris.activity.DeparturesActivity">
 
-    <TextView
+    <TextClock
         android:id="@+id/clock"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView"
         android:textAlignment="center" />
 
-    <android.support.v7.widget.RecyclerView
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:indeterminate="true" />
+
+    <TextView
+        android:id="@+id/errorText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:visibility="gone" />
+
+
+    <android.support.wear.widget.WearableRecyclerView
         android:id="@+id/sign_list"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:clipChildren="false"
+        android:clipToPadding="false"
+        android:paddingBottom="50dp"
+        android:paddingLeft="20dp"
+        android:paddingRight="20dp"
+        app:circularScrollingGestureEnabled="false" />
 </LinearLayout>

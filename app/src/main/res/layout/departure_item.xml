@@ -6,10 +6,10 @@
 
     <TextView
         android:id="@+id/line"
-        android:layout_width="wrap_content"
+        android:layout_width="20dp"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="TextView" />
+        android:layout_weight="0"
+        android:text="TextView"/>
 
     <TextView
         android:id="@+id/end_stop"
@@ -29,6 +29,7 @@
         android:id="@+id/time"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_weight="1"
-        android:text="TextView" />
+        android:layout_weight="0"
+        android:text="TextView"
+        android:textAlignment="viewEnd" />
 </LinearLayout>

@@ -1,29 +1,57 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context="name.xrodney.amazris.activity.StopsActivity">
 
-    <TextView
+    <TextClock
         android:id="@+id/clock"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="0"
-        android:text="Hello Android"
-        android:textAlignment="center"
-        tools:layout_editor_absoluteX="118dp"
-        tools:layout_editor_absoluteY="217dp" />
+        android:textAlignment="center" />
 
-    <android.support.wear.widget.WearableRecyclerView
-        android:id="@+id/stops_list"
+    <ProgressBar
+        android:id="@+id/progressBar"
+        style="?android:attr/progressBarStyleHorizontal"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:layout_weight="0"
-        android:clipChildren="false"
-        android:clipToPadding="false"
-        app:circularScrollingGestureEnabled="false" />
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="40dp"
+        android:layout_marginRight="40dp"
+        android:indeterminate="true" />
+
+    <TextView
+        android:id="@+id/errorText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAlignment="center"
+        android:visibility="gone" />
+
+    <android.support.v4.view.ViewPager xmlns:android="http://schemas.android.com/apk/res/android"
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <android.support.v4.view.PagerTabStrip
+            android:id="@+id/pager_title_strip"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="top"
+            android:background="#33b5e5"
+            android:textColor="#fff"
+            android:paddingTop="5dp"
+            android:paddingBottom="5dp" />
+
+    </android.support.v4.view.ViewPager>
+
+    <!--<android.support.wear.widget.WearableRecyclerView-->
+        <!--android:id="@+id/stops_list"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent"-->
+        <!--android:layout_weight="0"-->
+        <!--android:clipChildren="false"-->
+        <!--android:clipToPadding="false"-->
+        <!--app:circularScrollingGestureEnabled="false" />-->
 
 </LinearLayout>

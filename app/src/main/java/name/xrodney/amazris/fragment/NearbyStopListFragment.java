@@ -11,16 +11,18 @@ import com.kieronquinn.library.amazfitcommunication.location.ProxyLocationManage
 
 public class NearbyStopListFragment extends AbcStopListFragment {
     private Location location;
+    private LocationListener locationListener;
+    private ProxyLocationManager locationManager;
 
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Acquire a reference to the system Location Manager
-        ProxyLocationManager locationManager = new ProxyLocationManager(requireContext(), null);
+        locationManager = new ProxyLocationManager(requireContext(), null);
 
         // Define a listener that responds to location updates
-        LocationListener locationListener = new LocationListener() {
+        locationListener = new LocationListener() {
             public void onLocationChanged(Location location) {
                 Log.d(this.getClass().getSimpleName(), "Has location " + location.toString());
                 locationChanged(location);
@@ -38,22 +40,28 @@ public class NearbyStopListFragment extends AbcStopListFragment {
                 Log.d(this.getClass().getSimpleName(), "Provider disabled " + provider);
             }
         };
+    }
 
-        locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+    @Override
+    public void refresh() {
+        location = null;
+        super.refresh();
     }
 
     @Override
     protected void load() {
+
         if (location != null) {
             Log.i(getClass().getSimpleName(), "Location: " + location);
             client.getStops(requireContext(), location.getLatitude(), location.getLongitude(), this);
         } else {
+            locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
             Log.i(getClass().getSimpleName(), "Waiting for location...");
         }
     }
 
     private void locationChanged(Location location) {
         this.location = location;
-        refresh();
+        load();
     }
 }

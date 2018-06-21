@@ -51,7 +51,7 @@ public class AbcStopListFragment extends Fragment implements GenericClient.RisCa
 
     }
 
-    protected void refresh() {
+    public void refresh() {
         if (getActivity() == null) {
             return;
         }

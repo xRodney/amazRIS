@@ -6,6 +6,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.AppCompatActivity;
+import android.widget.TextClock;
 
 import name.xrodney.amazris.R;
 import name.xrodney.amazris.fragment.AbcStopListFragment;
@@ -28,6 +29,16 @@ public class StopsActivity extends AppCompatActivity {
         pagerAdapter = new StopListsPagerAdapter(getSupportFragmentManager());
         viewPager = findViewById(R.id.pager);
         viewPager.setAdapter(pagerAdapter);
+
+        TextClock clock = findViewById(R.id.clock);
+        clock.setOnClickListener((x) -> {
+            for (Fragment fragment : getSupportFragmentManager().getFragments()) {
+                if (fragment instanceof AbcStopListFragment) {
+                    ((AbcStopListFragment)fragment).refresh();
+                }
+            }
+        });
+
     }
 
     // Since this is an object collection, use a FragmentStatePagerAdapter,

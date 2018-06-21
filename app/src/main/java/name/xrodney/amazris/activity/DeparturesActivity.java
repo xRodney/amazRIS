@@ -19,13 +19,12 @@ import name.xrodney.amazris.data.RisClient;
 import name.xrodney.amazris.database.AppDatabase;
 import name.xrodney.amazris.model.StopDepartures;
 
-public class DeparturesActivity extends Activity implements GenericClient.RisCallback<StopDepartures> {
+public class DeparturesActivity extends Activity implements GenericClient.RisCallback<StopDepartures>, View.OnClickListener {
     public static final String EXTRA_STOP = "name.dusanjakub.amazris.STOP";
 
     private TextView clock;
     private WearableRecyclerView signList;
     private RisClient client;
-//    private ProgressDialog progressDialog;
     private ProgressBar progressBar;
     private TextView errorText;
     private Handler handler;
@@ -40,11 +39,12 @@ public class DeparturesActivity extends Activity implements GenericClient.RisCal
         setContentView(R.layout.activity_departures);
         clock = findViewById(R.id.clock);
         signList = findViewById(R.id.sign_list);
-        //progressDialog = new ProgressDialog(this);
         progressBar = findViewById(R.id.progressBar);
         errorText = findViewById(R.id.errorText);
         handler = new Handler(this.getMainLooper());
 
+        clock.setOnClickListener(this);
+        progressBar.setOnClickListener(this);
 
         // Get the Intent that started this activity and extract the string
         Intent intent = getIntent();
@@ -62,9 +62,6 @@ public class DeparturesActivity extends Activity implements GenericClient.RisCal
     }
 
     private void refresh() {
-//        progressDialog.setMessage(getString(R.string.loading));
-//        progressDialog.setCancelable(false);
-//        progressDialog.show();
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setIndeterminate(true);
 
@@ -76,7 +73,6 @@ public class DeparturesActivity extends Activity implements GenericClient.RisCal
     @Override
     public void onResult(StopDepartures result) {
         runOnUiThread(() -> {
-//            progressDialog.dismiss();
             startCountdown();
 
             if (result.getDepartures().isEmpty()) {
@@ -138,5 +134,10 @@ public class DeparturesActivity extends Activity implements GenericClient.RisCal
         }
 
         lastTick = thisTick;
+    }
+
+    @Override
+    public void onClick(View v) {
+        refresh();
     }
 }

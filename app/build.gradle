@@ -25,6 +25,15 @@ android {
     }
 }
 
+allprojects {
+    repositories {
+        jcenter()
+        flatDir {
+            dirs 'libs'
+        }
+    }
+}
+
 dependencies {
     implementation fileTree(include: ['*.jar'], dir: 'libs')
     implementation 'com.android.support.constraint:constraint-layout:1.1.0'
@@ -36,7 +45,7 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.1'
     implementation files('libs/SpringboardPluginLib.jar')
     implementation 'com.android.support:recyclerview-v7:27.1.1'
-    implementation files('libs/AmazfitCommunication.jar')
+    implementation(name:'app-debug', ext:'aar')
     implementation 'commons-io:commons-io:20030203.000550'
     implementation 'com.fasterxml.jackson.core:jackson-databind:2.9.5'
     implementation 'com.android.support:wear:27.0.0'

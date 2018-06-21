@@ -39,10 +39,12 @@ public class RisClient {
     }
 
     public void getStops(Context context, final GenericClient.RisCallback<List<Stop>> callback) {
+        Log.i(getClass().getSimpleName(), "get all stops");
         new StopsCacheTask(database.stopDao(), context, genericClient, callback).execute();
     }
 
     public void getStops(Context context, double lat, double lng, final GenericClient.RisCallback<List<Stop>> callback) {
+        Log.i(getClass().getSimpleName(), "get near stops");
         new StopsCacheTask(database.stopDao(), context, genericClient, callback).execute(lat, lng);
     }
 

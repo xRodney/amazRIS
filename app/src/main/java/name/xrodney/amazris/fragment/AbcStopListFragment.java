@@ -56,7 +56,7 @@ public class AbcStopListFragment extends Fragment implements GenericClient.RisCa
 
     }
 
-    private void refresh() {
+    protected void refresh() {
         progressBar.setVisibility(View.VISIBLE);
         progressBar.setIndeterminate(true);
 

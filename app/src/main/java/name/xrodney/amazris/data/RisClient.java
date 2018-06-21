@@ -85,7 +85,7 @@ public class RisClient {
                 if (coords.length == 0) {
                     callback.onResult(stopDao.getAll());
                 } else if (coords.length == 2) {
-                    callback.onResult(stopDao.getNearby(coords[0], coords[1], 1.0));
+                    callback.onResult(stopDao.getNearby(coords[0], coords[1]));
                 } else {
                     throw new IllegalArgumentException("Exactly 0 or 2 arguments must be given");
                 }

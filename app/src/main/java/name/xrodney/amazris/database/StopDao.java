@@ -14,8 +14,8 @@ public interface StopDao {
     @Query("SELECT * FROM stop")
     List<Stop> getAll();
 
-    @Query("SELECT * FROM stop WHERE abs(lat - :lat) < :radius AND abs(lng - :lng) < :radius")
-    List<Stop> getNearby(double lat, double lng, double radius);
+    @Query("SELECT * FROM stop WHERE lat != 0 AND lng != 0 ORDER BY abs(lat - :lat) + abs(lng - :lng) ASC")
+    List<Stop> getNearby(double lat, double lng);
 
     @Insert
     void insertAll(List<Stop> stops);

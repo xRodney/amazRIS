@@ -31,6 +31,7 @@ public class DeparturesActivity extends Activity implements GenericClient.RisCal
     private Handler handler;
     private Runnable tick = this::tick;
     private int stopId;
+    private long lastTick;
 
 
     @Override
@@ -76,10 +77,7 @@ public class DeparturesActivity extends Activity implements GenericClient.RisCal
     public void onResult(StopDepartures result) {
         runOnUiThread(() -> {
 //            progressDialog.dismiss();
-            progressBar.setIndeterminate(false);
-            progressBar.setMax(30);
-            progressBar.setProgress(progressBar.getMax());
-            handler.postDelayed(tick, 1000);
+            startCountdown();
 
             if (result.getDepartures().isEmpty()) {
                 errorText.setVisibility(View.VISIBLE);
@@ -105,11 +103,19 @@ public class DeparturesActivity extends Activity implements GenericClient.RisCal
 
     }
 
+    private void startCountdown() {
+        progressBar.setIndeterminate(false);
+        progressBar.setMax(30);
+        progressBar.setProgress(progressBar.getMax());
+        lastTick = System.currentTimeMillis() / 1000;
+        handler.postDelayed(tick, 1000);
+    }
+
     @Override
     public void onError(Exception exception) {
         runOnUiThread(() -> {
 //            progressDialog.dismiss();
-            progressBar.setVisibility(View.GONE);
+            startCountdown();
             errorText.setVisibility(View.VISIBLE);
             errorText.setText(exception.getMessage());
             exception.printStackTrace();
@@ -118,12 +124,19 @@ public class DeparturesActivity extends Activity implements GenericClient.RisCal
     }
 
     private void tick() {
+        long thisTick = System.currentTimeMillis() / 1000;
+        long diff = thisTick - lastTick;
+
         int progress = progressBar.getProgress();
+
+        progress -= diff;
         if (progress > 0) {
-            progressBar.setProgress(progress-1);
+            progressBar.setProgress(progress);
             handler.postDelayed(tick, 1000);
         } else {
             refresh();
         }
+
+        lastTick = thisTick;
     }
 }

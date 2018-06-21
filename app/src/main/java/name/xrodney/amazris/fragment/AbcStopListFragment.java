@@ -24,7 +24,7 @@ import name.xrodney.amazris.database.AppDatabase;
 import name.xrodney.amazris.layout.AmazfitLayoutCallback;
 import name.xrodney.amazris.model.Stop;
 
-public class AbcStopListFragment extends Fragment implements GenericClient.RisCallback<List<Stop>>,StopsListAdapter.StopClickListener {
+public class AbcStopListFragment extends Fragment implements GenericClient.RisCallback<List<Stop>>, StopsListAdapter.StopClickListener {
     public static final String ARG_OBJECT = "object";
 
     private WearableRecyclerView stopsList;
@@ -36,16 +36,11 @@ public class AbcStopListFragment extends Fragment implements GenericClient.RisCa
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
-        // The last two arguments ensure LayoutParams are inflated
-        // properly.
-        View rootView = inflater.inflate(
-                R.layout.stop_list, container, false);
-
+        View rootView = inflater.inflate(R.layout.stop_list, container, false);
 
         stopsList = rootView.findViewById(R.id.stops_list);
-
-        progressBar = requireActivity().findViewById(R.id.progressBar);
-        errorText = requireActivity().findViewById(R.id.errorText);
+        progressBar = rootView.findViewById(R.id.progressBar);
+        errorText = rootView.findViewById(R.id.errorText);
 
         client = new RisClient(AppDatabase.getInstance(requireContext()));
 
@@ -57,10 +52,16 @@ public class AbcStopListFragment extends Fragment implements GenericClient.RisCa
     }
 
     protected void refresh() {
-        progressBar.setVisibility(View.VISIBLE);
-        progressBar.setIndeterminate(true);
+        if (getActivity() == null) {
+            return;
+        }
 
-        errorText.setVisibility(View.GONE);
+        requireActivity().runOnUiThread(() -> {
+            progressBar.setVisibility(View.VISIBLE);
+            progressBar.setIndeterminate(true);
+
+            errorText.setVisibility(View.GONE);
+        });
 
         load();
     }
@@ -71,6 +72,9 @@ public class AbcStopListFragment extends Fragment implements GenericClient.RisCa
 
 
     public void onResult(List<Stop> stops) {
+        if (getActivity() == null) {
+            return;
+        }
         requireActivity().runOnUiThread(() -> {
             progressBar.setVisibility(View.GONE);
 
@@ -84,13 +88,15 @@ public class AbcStopListFragment extends Fragment implements GenericClient.RisCa
     }
 
     public void onError(Exception exception) {
-        requireActivity().runOnUiThread(() -> {
-            progressBar.setVisibility(View.GONE);
-            exception.printStackTrace();
-            errorText.setVisibility(View.VISIBLE);
-            errorText.setText(exception.getMessage());
-            Toast.makeText(requireContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
-        });
+        if (getActivity() != null) {
+            requireActivity().runOnUiThread(() -> {
+                progressBar.setVisibility(View.GONE);
+                exception.printStackTrace();
+                errorText.setVisibility(View.VISIBLE);
+                errorText.setText(exception.getMessage());
+            });
+        }
+        Toast.makeText(requireContext(), exception.getMessage(), Toast.LENGTH_LONG).show();
     }
 
     public void selectStop(Stop stop) {
